@@ -41,6 +41,19 @@
         });
     }
 
+    /*
+        Views to show:
+            -- List of all workouts
+                -- sort by date
+
+            -- History of an exercise
+                -- sets over time
+                -- grapahed over time
+
+            -- List of all exercises
+                -- click into an show history 
+     */
+
     async function readIntoRows(file: File) : Promise<StrongExportRow[]> {
         const parsedResults = await parseFile(file);
         const parsedData = parsedResults.data;
