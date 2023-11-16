@@ -32,8 +32,12 @@
     import type {Workout} from "@/models/Workout";
     import WorkoutList from "@/components/WorkoutList.vue";
 
-    const state = reactive({
-        workouts: [] as Workout[]
+
+    interface ElementState {
+        workouts: Workout[]
+    }
+    const state : ElementState = reactive({
+        workouts: []
     });
 
     async function fileUploaded(event: Event) {
