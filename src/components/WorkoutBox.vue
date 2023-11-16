@@ -39,7 +39,27 @@
             </p>
         </div>
         <div v-else>
-            I'm expanded now
+            <p v-if="workout.notes && workout.notes.length > 0">
+                {{ workout.notes }}
+            </p>
+
+            <div
+                v-for="exercise in workout.exercises"
+                :key="exercise.name"
+                class="box"
+            >
+                <p class="has-text-weight-bold">
+                    {{ exercise.name }}
+                </p>
+
+
+                <p
+                    v-for="(set, index) in exercise.sets"
+                    :key="index"
+                >
+                    {{ index + 1 }}&nbsp;&nbsp;{{ set.weight }} {{ set.weightUnit }} x {{ set.reps }}
+                </p>
+            </div>
         </div>
     </div>
 </template>
