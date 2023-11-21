@@ -21,7 +21,24 @@
             </label>
         </div>
         <div v-else>
-            <WorkoutList :workouts="state.workouts" />
+            <div class="tabs is-medium is-boxed">
+                <ul>
+                    <li :class="{'is-active': state.currentTab === TabType.Workouts}">
+                        <a @click="setTab(TabType.Workouts)">Workouts</a>
+                    </li>
+                    <li :class="{'is-active': state.currentTab === TabType.Exercises}">
+                        <a @click="setTab(TabType.Exercises)">Exercises</a>
+                    </li>
+                </ul>
+            </div>
+            <WorkoutList
+                v-if="state.currentTab === TabType.Workouts"
+                :workouts="state.workouts"
+            />
+            <ExerciseList
+                v-if="state.currentTab === TabType.Exercises"
+                :exercises="state.exercises"
+            />
         </div>
     </div>
 </template>
@@ -31,14 +48,49 @@
     import {readWorkoutFile} from "@/services/WorkoutImporter";
     import type {Workout} from "@/models/Workout";
     import WorkoutList from "@/components/WorkoutList.vue";
+    import {Exercise} from "@/models/Exercise";
+    import ExerciseList from "@/components/ExerciseList.vue";
 
+    enum TabType {
+        Workouts = 1,
+        Exercises = 2
+    }
 
     interface ElementState {
         workouts: Workout[]
+        exercises: Exercise[]
+        currentTab: TabType;
+
     }
     const state : ElementState = reactive({
-        workouts: []
+        workouts: [],
+        exercises: [],
+        currentTab: TabType.Workouts
     });
+
+    function setTab(newTab: TabType) {
+        state.currentTab = newTab;
+    }
+
+    function createExercisesFromWorkouts(workouts: Workout[]): Exercise[] {
+        let exercises = {} as { [exerciseName: string]: Exercise };
+        let exerciseNum = 1;
+
+        for (const workout of workouts) {
+
+            for (const exercise of workout.exercises) {
+
+                if (Object.prototype.hasOwnProperty.call(exercises, exercise.name)) {
+                    exercises[exercise.name].addWorkout(workout);
+                }
+                else {
+                    exercises[exercise.name] = new Exercise(exerciseNum, exercise.name);
+                    exerciseNum += 1;
+                }
+            }
+        }
+        return Object.values(exercises);
+    }
 
     async function fileUploaded(event: Event) {
         const input = event.target as HTMLInputElement;
@@ -48,10 +100,12 @@
 
         const file = input.files[0];
         const workouts = await readWorkoutFile(file);
+        const exercises = createExercisesFromWorkouts(workouts);
 
         workouts.sort((l, r) => r.date.toMillis() - l.date.toMillis())
-        console.dir(workouts);
+
         state.workouts = workouts;
+        state.exercises = exercises;
     }
 
 </script>

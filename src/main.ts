@@ -17,11 +17,14 @@ library.add(far);
 
 import App from "./App.vue"
 import router from "./router"
+import {clickOutside} from "@/services/CustomDirectives";
 
 const app = createApp(App)
     .component("FaIcon", FontAwesomeIcon);
 
 app.use(createPinia())
 app.use(router)
+
+app.directive("click-outside", clickOutside);
 
 app.mount("#app")

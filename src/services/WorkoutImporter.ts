@@ -20,11 +20,7 @@ async function readIntoRows(file: File) : Promise<StrongExportRow[]> {
     const parsedResults = await parseFile(file);
     const parsedData = parsedResults.data;
 
-    console.dir(parsedResults);
-
     let results = [];
-
-    console.log("length of parsedData: " + parsedData.length);
 
     // skip the first row as it is the headers
     for (let i = 1; i < parsedData.length; i++) {

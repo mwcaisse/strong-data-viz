@@ -2,7 +2,7 @@ import {DateTime} from "luxon";
 import type {Workout} from "@/models/Workout";
 
 
-class Exercise {
+export class Exercise {
 
     id: number;
 
