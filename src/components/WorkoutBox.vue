@@ -15,7 +15,10 @@
             </span>
         </p>
         <p>
-            {{ workout.date }}
+            {{ workout.date.toLocaleString(DateTime.DATETIME_FULL_WITH_SECONDS) }}
+        </p>
+        <p>
+            {{ workout.duration.toHuman() }}
         </p>
 
         <div
@@ -38,7 +41,10 @@
                 <span class="is-flex">{{ bestSetDescription(exercise) }}</span>
             </p>
         </div>
-        <div v-else>
+        <div
+            v-else
+            class="pt-3"
+        >
             <p v-if="workout.notes && workout.notes.length > 0">
                 {{ workout.notes }}
             </p>
@@ -83,6 +89,7 @@
     import type {Workout, WorkoutExercise, WorkoutExerciseSet} from "@/models/Workout";
     import {reactive} from "vue";
     import Icon from "@/components/Common/Icon.vue";
+    import {DateTime} from "luxon";
 
     interface Props {
         workout: Workout

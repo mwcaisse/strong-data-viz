@@ -1,6 +1,8 @@
 import {parse} from "papaparse";
+import parseDuration from "parse-duration"
 import type {StrongExportRow} from "@/models/StrongExportRow";
 import type {Workout, WorkoutExercise, WorkoutExerciseSet} from "@/models/Workout";
+import {DateTime, Duration} from "luxon";
 
 function parseFile(file: File) : Promise<any> {
     return new Promise((resolve, reject) => {
@@ -111,11 +113,13 @@ function convertRowsIntoWorkouts(strongRows: StrongExportRow[]) : Workout[] {
             continue;
         }
         const firstRow = workoutMap[workoutKey][0];
+
         workouts.push({
-            date: firstRow.date,
+            // 2023-11-07 12:11:00
+            date: DateTime.fromFormat(firstRow.date, "yyyy-MM-dd HH:mm:ss"),
             name: firstRow.workoutName,
             notes: firstRow.workoutNotes,
-            duration: firstRow.workoutDuration,
+            duration: Duration.fromMillis(parseDuration(firstRow.workoutDuration)).rescale(),
             exercises: convertRowsIntoExercises(workoutMap[workoutKey])
         });
     }

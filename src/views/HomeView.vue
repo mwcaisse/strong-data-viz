@@ -49,8 +49,7 @@
         const file = input.files[0];
         const workouts = await readWorkoutFile(file);
 
-        workouts.sort((l, r) => r.date.localeCompare(l.date));
-
+        workouts.sort((l, r) => r.date.toMillis() - l.date.toMillis())
         console.dir(workouts);
         state.workouts = workouts;
     }

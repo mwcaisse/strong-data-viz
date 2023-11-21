@@ -1,3 +1,4 @@
+import type {DateTime, Duration} from "luxon";
 
 export interface WorkoutExerciseSet {
     weight: number;
@@ -11,10 +12,10 @@ export interface WorkoutExercise {
     sets: WorkoutExerciseSet[];
 }
 export interface Workout {
-    date: string;
+    date: DateTime;
     name: string;
     notes: string;
-    duration: string;
+    duration: Duration;
     exercises: WorkoutExercise[];
 }
 
