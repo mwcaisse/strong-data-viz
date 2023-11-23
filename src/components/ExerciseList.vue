@@ -46,10 +46,11 @@
             </div>
         </div>
 
-        <div
+        <a
             v-for="exercise in exercisesSorted"
             :key="exercise.id"
             class="box"
+            @click="showExerciseHistory(exercise)"
         >
             <p class="title is-5">
                 {{ exercise.name }}
@@ -59,22 +60,24 @@
                 class="is-flex is-flex-direction-row"
             >
                 <span class="is-flex is-flex-grow-1">
-                    Last Performed {{ exercise.lastPerformed.toLocaleString(DateTime.DATETIME_FULL_WITH_SECONDS) }}
+                    Last Performed {{ Utils.formatDateTime(exercise.lastPerformed) }}
                 </span>
                 <span class="is-flex">
                     Performed {{ exercise.workouts.length }} time(s)
                 </span>
             </p>
-        </div>
+        </a>
+        <ExerciseHistoryModal ref="exerciseHistoryModalRef" />
     </div>
 </template>
 
 <script setup lang="ts">
 
     import type {Exercise} from "@/models/Exercise";
-    import {DateTime} from "luxon";
     import Icon from "@/components/Common/Icon.vue";
-    import {computed, reactive} from "vue";
+    import ExerciseHistoryModal from "@/components/ExerciseHistoryModal.vue";
+    import {computed, reactive, ref} from "vue";
+    import Utils from "@/services/Utils";
 
     enum SortByType {
         Name = 1,
@@ -120,6 +123,8 @@
         sortAscending: false
     });
 
+    const exerciseHistoryModalRef = ref();
+
     function getSortFunction(type: SortByType, ascending: boolean): (a: Exercise, b: Exercise) => number {
         const modifier = ascending ? 1 : -1;
 
@@ -154,6 +159,12 @@
     function selectSortBy(sortByOption: SortByOption) {
         state.sortByOption = sortByOption;
         hideSortByDropdown();
+    }
+
+    function showExerciseHistory(exercise: Exercise) {
+        console.dir(exerciseHistoryModalRef.value);
+        console.dir(exerciseHistoryModalRef);
+        exerciseHistoryModalRef.value.open(exercise);
     }
 
 </script>

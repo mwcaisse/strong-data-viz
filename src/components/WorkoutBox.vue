@@ -54,31 +54,10 @@
                 :key="exercise.name"
                 class="box"
             >
-                <p class="is-flex is-flex-direction-row">
-                    <span class="is-flex is-flex-grow-1  has-text-weight-bold">
-                        {{ exercise.name }}
-                    </span>
-                    <span class="is-flex has-text-weight-bold">
-                        Estimated 1RM
-                    </span>
-                </p>
-
-
-                <p
-                    v-for="(set, index) in exercise.sets"
-                    :key="index"
-                    class="is-flex is-flex-direction-row"
-                >
-                    <span class="is-flex has-text-weight-bold">
-                        {{ index + 1 }}
-                    </span>
-                    <span class="is-flex is-flex-grow-1 pl-2">
-                        {{ set.weight }} {{ set.weightUnit }} x {{ set.reps }}
-                    </span>
-                    <span class="is-flex">
-                        {{ calculateOneRepMax(set) }} {{ set.weightUnit }}
-                    </span>
-                </p>
+                <WorkoutSets
+                    :exercise="exercise"
+                    :title="exercise.name"
+                />
             </div>
         </div>
     </div>
@@ -90,6 +69,7 @@
     import {reactive} from "vue";
     import Icon from "@/components/Common/Icon.vue";
     import {DateTime} from "luxon";
+    import WorkoutSets from "@/components/WorkoutSets.vue";
 
     interface Props {
         workout: Workout
@@ -128,10 +108,5 @@
 
         return `${bestSet.weight} ${bestSet.weightUnit} x ${bestSet.reps}`;
     }
-
-    function calculateOneRepMax(set: WorkoutExerciseSet) : number {
-        return Math.round(set.weight / (1.0278 - (0.0278 * set.reps)));
-    }
-
 
 </script>
