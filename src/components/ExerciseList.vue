@@ -39,7 +39,7 @@
                 >
                     <Icon
                         class="fa-lg"
-                        :icon="state.sortAscending ? 'arrow-up-9-1' : 'arrow-down-9-1'"
+                        :icon="state.sortAscending ? 'arrow-up-1-9' : 'arrow-down-9-1'"
                         :action="true"
                     />
                 </a>
@@ -115,9 +115,9 @@
     }
 
     const state : ElementState = reactive({
-        sortByOption: sortByOptions[0],
+        sortByOption: sortByOptions[2],
         showSortByDropdown: false,
-        sortAscending: true
+        sortAscending: false
     });
 
     function getSortFunction(type: SortByType, ascending: boolean): (a: Exercise, b: Exercise) => number {
