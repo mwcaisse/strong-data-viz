@@ -1,7 +1,7 @@
 <template>
     <Modal
         ref="modal"
-        title="Exercise History"
+        :title="modalTitle"
     >
         <div
             v-for="performance in state.performances"
@@ -22,7 +22,7 @@
 </template>
 
 <script setup lang="ts">
-    import {reactive, ref} from "vue";
+    import {computed, reactive, ref} from "vue";
 
     import type {Exercise} from "@/models/Exercise";
     import type {Workout, WorkoutExercise} from "@/models/Workout";
@@ -37,11 +37,19 @@
 
     interface ElementState {
         performances?: ExercisePerformance[];
+        exercise?: Exercise;
     }
 
     const state = reactive<ElementState>({
         performances: []
     });
+
+    const modalTitle = computed(() => {
+        if (state.exercise) {
+            return state.exercise.name + " History";
+        }
+        return "Exercise History";
+    })
 
     const modal = ref(null);
 
@@ -64,6 +72,7 @@
 
     const open = (exercise: Exercise) => {
         state.performances = convertExerciseToPerformance(exercise);
+        state.exercise = exercise;
         modal.value.open();
     };
 

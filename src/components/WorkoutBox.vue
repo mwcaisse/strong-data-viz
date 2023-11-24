@@ -56,20 +56,25 @@
             >
                 <WorkoutSets
                     :exercise="exercise"
-                    :title="exercise.name"
-                />
+                >
+                    <a @click="showExerciseHistory(exercise)">{{ exercise.name }}</a>
+                </WorkoutSets>
             </div>
         </div>
+
+        <ExerciseHistoryModal ref="exerciseHistoryModalRef" />
     </div>
 </template>
 
 <script setup lang="ts">
 
-    import type {Workout, WorkoutExercise, WorkoutExerciseSet} from "@/models/Workout";
-    import {reactive} from "vue";
+    import type {Workout, WorkoutExercise} from "@/models/Workout";
+    import {reactive, ref} from "vue";
     import Icon from "@/components/Common/Icon.vue";
     import {DateTime} from "luxon";
     import WorkoutSets from "@/components/WorkoutSets.vue";
+    import ExerciseHistoryModal from "@/components/ExerciseHistoryModal.vue";
+    import {useWorkoutsStore} from "@/stores/workout";
 
     interface Props {
         workout: Workout
@@ -84,8 +89,19 @@
         expanded: false
     });
 
+    const workoutStore = useWorkoutsStore();
+
+    const exerciseHistoryModalRef = ref();
+
     function toggleExpanded() {
         state.expanded = !state.expanded;
+    }
+
+    function showExerciseHistory(workoutExercise: WorkoutExercise) {
+        console.log("showExerciseHistory: ExerciseID: " + workoutExercise.id);
+        const exercise = workoutStore.getExerciseById(workoutExercise.id);
+        console.dir(exercise)
+        exerciseHistoryModalRef.value.open(exercise);
     }
 
     function bestSetDescription(exercise: WorkoutExercise) : string {

@@ -6,7 +6,9 @@
         </p>
         <p class="is-flex is-flex-direction-row">
             <span class="is-flex is-flex-grow-1  has-text-weight-bold">
-                {{ title }}
+                <slot>
+                    {{ title }}
+                </slot>
             </span>
             <span class="is-flex has-text-weight-bold">
                 Estimated 1RM
@@ -37,7 +39,7 @@
 
     interface Props {
         exercise: WorkoutExercise;
-        title: string;
+        title?: string;
     }
 
     const props = defineProps<Props>();

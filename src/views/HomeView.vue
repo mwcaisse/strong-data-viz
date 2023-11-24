@@ -2,7 +2,7 @@
 <template>
     <div class="section">
         <div
-            v-if="state.workouts.length < 1"
+            v-if="workouts.length < 1"
             class="file is-normal is-boxed"
         >
             <label class="file-label">
@@ -33,11 +33,11 @@
             </div>
             <WorkoutList
                 v-if="state.currentTab === TabType.Workouts"
-                :workouts="state.workouts"
+                :workouts="workouts"
             />
             <ExerciseList
                 v-if="state.currentTab === TabType.Exercises"
-                :exercises="state.exercises"
+                :exercises="exercises"
             />
         </div>
     </div>
@@ -50,6 +50,8 @@
     import WorkoutList from "@/components/WorkoutList.vue";
     import {Exercise} from "@/models/Exercise";
     import ExerciseList from "@/components/ExerciseList.vue";
+    import {useWorkoutsStore} from "@/stores/workout";
+    import {storeToRefs} from "pinia";
 
     enum TabType {
         Workouts = 1,
@@ -57,16 +59,16 @@
     }
 
     interface ElementState {
-        workouts: Workout[]
-        exercises: Exercise[]
         currentTab: TabType;
 
     }
     const state : ElementState = reactive({
-        workouts: [],
-        exercises: [],
         currentTab: TabType.Workouts
     });
+
+    const workoutStore = useWorkoutsStore();
+
+    const {workouts, exercises} = storeToRefs(workoutStore);
 
     function setTab(newTab: TabType) {
         state.currentTab = newTab;
@@ -74,7 +76,6 @@
 
     function createExercisesFromWorkouts(workouts: Workout[]): Exercise[] {
         let exercises = {} as { [exerciseName: string]: Exercise };
-        let exerciseNum = 1;
 
         for (const workout of workouts) {
 
@@ -84,8 +85,7 @@
                     exercises[exercise.name].addWorkout(workout);
                 }
                 else {
-                    exercises[exercise.name] = new Exercise(exerciseNum, exercise.name);
-                    exerciseNum += 1;
+                    exercises[exercise.name] = new Exercise(exercise.id, exercise.name);
                 }
             }
         }
@@ -104,8 +104,8 @@
 
         workouts.sort((l, r) => r.date.toMillis() - l.date.toMillis())
 
-        state.workouts = workouts;
-        state.exercises = exercises;
+        workoutStore.setWorkouts(workouts);
+        workoutStore.setExercises(exercises);
     }
 
 </script>

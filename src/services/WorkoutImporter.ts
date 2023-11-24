@@ -74,7 +74,7 @@ function convertRowsIntoSets(strongRows: StrongExportRow[]) : WorkoutExerciseSet
     }));
 }
 
-function convertRowsIntoExercises(strongRows: StrongExportRow[]) : WorkoutExercise[] {
+function convertRowsIntoExercises(strongRows: StrongExportRow[], exerciseIds: Map<string, number>) : WorkoutExercise[] {
     // group all rows by [ exerciseName ], i.e. group by exercise, they are already all for one workout
     let exerciseMap = strongRowsToDictionary(strongRows, row => row.exerciseName);
 
@@ -85,6 +85,7 @@ function convertRowsIntoExercises(strongRows: StrongExportRow[]) : WorkoutExerci
         }
         const firstRow = exerciseMap[key][0];
         exercises.push({
+            id: exerciseIds.get(firstRow.exerciseName)!,
             name: firstRow.exerciseName,
             note: firstRow.exerciseNotes,
             sets: convertRowsIntoSets(exerciseMap[key])
@@ -92,6 +93,20 @@ function convertRowsIntoExercises(strongRows: StrongExportRow[]) : WorkoutExerci
     }
 
     return exercises;
+}
+
+function createExerciseIdMap(strongRows: StrongExportRow[]) : Map<string, number> {
+    let exerciseId = 0;
+    let results = new Map<string, number>();
+
+    for (const row of strongRows) {
+        if (results.has(row.exerciseName)) {
+            continue;
+        }
+        results.set(row.exerciseName, exerciseId++);
+    }
+
+    return results;
 }
 
 function convertRowsIntoWorkouts(strongRows: StrongExportRow[]) : Workout[] {
@@ -104,6 +119,9 @@ function convertRowsIntoWorkouts(strongRows: StrongExportRow[]) : Workout[] {
     // now for each workout, lets createeee
     const workouts = [] as Workout[];
 
+    const exerciseIds = createExerciseIdMap(strongRows);
+
+    let workspaceId = 0;
     for (const workoutKey in workoutMap) {
         if (!Object.prototype.hasOwnProperty.call(workoutMap, workoutKey)) {
             continue;
@@ -111,13 +129,15 @@ function convertRowsIntoWorkouts(strongRows: StrongExportRow[]) : Workout[] {
         const firstRow = workoutMap[workoutKey][0];
 
         workouts.push({
+            id: workspaceId++,
             // 2023-11-07 12:11:00
             date: DateTime.fromFormat(firstRow.date, "yyyy-MM-dd HH:mm:ss"),
             name: firstRow.workoutName,
             notes: firstRow.workoutNotes,
-            duration: Duration.fromMillis(parseDuration(firstRow.workoutDuration)).rescale(),
-            exercises: convertRowsIntoExercises(workoutMap[workoutKey])
+            duration: Duration.fromMillis(<number>parseDuration(firstRow.workoutDuration)).rescale(),
+            exercises: convertRowsIntoExercises(workoutMap[workoutKey], exerciseIds)
         });
+
     }
 
     return workouts;

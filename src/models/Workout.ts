@@ -7,11 +7,13 @@ export interface WorkoutExerciseSet {
 }
 
 export interface WorkoutExercise {
+    id: number;
     name: string;
     note: string;
     sets: WorkoutExerciseSet[];
 }
 export interface Workout {
+    id: number;
     date: DateTime;
     name: string;
     notes: string;
