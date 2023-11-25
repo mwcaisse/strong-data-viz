@@ -20,9 +20,15 @@
                 </span>
             </label>
         </div>
-        <div v-else>
+        <div
+            v-else
+            class="container"
+        >
             <div class="tabs is-medium is-boxed">
                 <ul>
+                    <li :class="{'is-active': state.currentTab === TabType.Overview}">
+                        <a @click="setTab(TabType.Overview)">Overview</a>
+                    </li>
                     <li :class="{'is-active': state.currentTab === TabType.Workouts}">
                         <a @click="setTab(TabType.Workouts)">Workouts</a>
                     </li>
@@ -39,12 +45,13 @@
                 v-if="state.currentTab === TabType.Exercises"
                 :exercises="exercises"
             />
+            <WorkoutsOverview v-if="state.currentTab === TabType.Overview" />
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-    import {reactive, computed} from "vue";
+    import {reactive} from "vue";
     import {readWorkoutFile} from "@/services/WorkoutImporter";
     import type {Workout} from "@/models/Workout";
     import WorkoutList from "@/components/WorkoutList.vue";
@@ -52,10 +59,12 @@
     import ExerciseList from "@/components/ExerciseList.vue";
     import {useWorkoutsStore} from "@/stores/workout";
     import {storeToRefs} from "pinia";
+    import WorkoutsOverview from "@/components/WorkoutsOverview.vue";
 
     enum TabType {
         Workouts = 1,
-        Exercises = 2
+        Exercises = 2,
+        Overview = 3,
     }
 
     interface ElementState {
