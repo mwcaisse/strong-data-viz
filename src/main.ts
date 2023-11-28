@@ -12,6 +12,8 @@ import {fas} from "@fortawesome/free-solid-svg-icons"
 import {far} from "@fortawesome/free-regular-svg-icons"
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome"
 
+import {setupCalendar} from "v-calendar";
+
 library.add(fas);
 library.add(far);
 
@@ -24,6 +26,7 @@ const app = createApp(App)
 
 app.use(createPinia())
 app.use(router)
+app.use(setupCalendar, {});
 
 app.directive("click-outside", clickOutside);
 

@@ -99,7 +99,7 @@
                     </div>
                     <div class="tile is-child box">
                         <div class="has-text-centered">
-                                <p class="heading">
+                            <p class="heading">
                                 All time working out
                             </p>
                             <p class="title">
@@ -110,20 +110,29 @@
                 </div>
             </div>
         </div>
+        <div>
+            <Calendar
+                borderless
+                :attributes="calendarAttributes"
+                :max-date="new Date()"
+            />
+        </div>
     </div>
 </template>
 
 <script setup lang="ts">
 
+    import {Calendar} from "v-calendar"
+    import "v-calendar/style.css"
+
     import {useWorkoutsStore} from "@/stores/workout";
-    import {computed} from "vue";
+    import {computed, ref} from "vue";
     import {DateTime, Duration} from "luxon";
     import type {DateTimeUnit} from "luxon/src/datetime";
     import type {Workout} from "@/models/Workout";
     import {prettyDuration} from "@/services/Utils";
 
     const workoutStore = useWorkoutsStore();
-
 
     const workoutsThisWeek = computed(() => {
         // Luxon hard codes start of week to Monday, I want Sunday, subtract one
@@ -146,5 +155,17 @@
     const timeThisMonth = computed(() => workoutsThisMonth.value.reduce((a: Duration, cv: Workout) => a.plus(cv.duration), Duration.fromObject({hours: 0})))
     const timeThisYear= computed(() => workoutsThisYear.value.reduce((a: Duration, cv: Workout) => a.plus(cv.duration), Duration.fromObject({hours: 0})))
     const timeAllTime = computed(() => workoutStore.workouts.reduce((a: Duration, cv: Workout) => a.plus(cv.duration), Duration.fromObject({hours: 0})))
+
+    const calendarAttributes = computed(() => workoutStore.workouts.map(workout => ({
+        key: workout.id,
+        highlight: true,
+        dates: workout.date.toJSDate(),
+        order: 0,
+        popover: {
+            label: workout.name,
+            visibility: "click"
+        },
+        workout: workout
+    })));
 
 </script>
