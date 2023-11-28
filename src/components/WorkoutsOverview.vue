@@ -35,7 +35,7 @@
                                 Time this Week
                             </p>
                             <p class="title">
-                                {{ timeThisWeek.normalize().toHuman() }}
+                                {{ prettyDuration(timeThisWeek) }}
                             </p>
                         </div>
                     </div>
@@ -57,7 +57,7 @@
                                 Time this Month
                             </p>
                             <p class="title">
-                                {{ timeThisMonth.normalize().toHuman() }}
+                                {{ prettyDuration(timeThisMonth) }}
                             </p>
                         </div>
                     </div>
@@ -80,7 +80,7 @@
                                 Time this Year
                             </p>
                             <p class="title">
-                                {{ timeThisYear.normalize().toHuman() }}
+                                {{ prettyDuration(timeThisYear) }}
                             </p>
                         </div>
                     </div>
@@ -99,11 +99,11 @@
                     </div>
                     <div class="tile is-child box">
                         <div class="has-text-centered">
-                            <p class="heading">
+                                <p class="heading">
                                 All time working out
                             </p>
                             <p class="title">
-                                {{ timeAllTime.normalize().toHuman() }}
+                                {{ prettyDuration(timeAllTime) }}
                             </p>
                         </div>
                     </div>
@@ -120,6 +120,7 @@
     import {DateTime, Duration} from "luxon";
     import type {DateTimeUnit} from "luxon/src/datetime";
     import type {Workout} from "@/models/Workout";
+    import {prettyDuration} from "@/services/Utils";
 
     const workoutStore = useWorkoutsStore();
 

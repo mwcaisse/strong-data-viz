@@ -72,7 +72,7 @@
 
     }
     const state : ElementState = reactive({
-        currentTab: TabType.Workouts
+        currentTab: TabType.Overview
     });
 
     const workoutStore = useWorkoutsStore();

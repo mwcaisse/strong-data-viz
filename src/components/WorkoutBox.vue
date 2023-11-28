@@ -18,7 +18,7 @@
             {{ workout.date.toLocaleString(DateTime.DATETIME_FULL_WITH_SECONDS) }}
         </p>
         <p>
-            {{ workout.duration.toHuman() }}
+            {{ prettyDuration(workout.duration) }}
         </p>
 
         <div
@@ -75,6 +75,7 @@
     import WorkoutSets from "@/components/WorkoutSets.vue";
     import ExerciseHistoryModal from "@/components/ExerciseHistoryModal.vue";
     import {useWorkoutsStore} from "@/stores/workout";
+    import {prettyDuration} from "../services/Utils";
 
     interface Props {
         workout: Workout

@@ -1,4 +1,4 @@
-import {DateTime} from "luxon";
+import {DateTime, Duration} from "luxon";
 
 
 export function isStringNullOrBlank(s: string) : boolean {
@@ -12,7 +12,12 @@ export function formatDateTime(dt: DateTime) : string {
     return dt.toLocaleString(DateTime.DATETIME_FULL_WITH_SECONDS);
 }
 
+export function prettyDuration(duration: Duration) : string {
+    return duration.rescale().toHuman();
+}
+
 export default {
     isStringNullOrBlank,
-    formatDateTime
+    formatDateTime,
+    prettyDuration
 }
