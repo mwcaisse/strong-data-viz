@@ -1,5 +1,32 @@
 <template>
     <div class="container">
+        <div class="field has-addons">
+            <div class="control is-expanded has-icons-left">
+                <input
+                    v-model="state.searchText"
+                    class="input"
+                    type="text"
+                    placeholder="Search for exercise"
+                >
+                <span class="icon is-left">
+                    <Icon icon="search" />
+                </span>
+            </div>
+            <div
+                v-if="hasSearchText"
+                class="control"
+            >
+                <a
+                    class="button"
+                    @click="clearSearch"
+                >
+                    <Icon
+                        icon="times"
+                        class="fa-lg"
+                    />
+                </a>
+            </div>
+        </div>
         <div class="is-flex is-flex-direction-row pb-3">
             <div class="is-flex is-flex-grow-1" />
             <div
@@ -14,7 +41,10 @@
                     <button class="button">
                         <span>Sort by {{ state.sortByOption.name }}</span>
                         <span class="icon is-small">
-                            <Icon icon="angle-down" />
+                            <Icon
+                                icon="angle-down"
+                                :action="true"
+                            />
                         </span>
                     </button>
                 </div>
@@ -114,16 +144,24 @@
     interface ElementState {
         sortByOption: SortByOption,
         showSortByDropdown: boolean,
-        sortAscending: boolean
+        sortAscending: boolean,
+        searchText: string,
     }
 
     const state : ElementState = reactive({
         sortByOption: sortByOptions[2],
         showSortByDropdown: false,
-        sortAscending: false
+        sortAscending: false,
+        searchText: ""
     });
 
     const exerciseHistoryModalRef = ref();
+
+    const hasSearchText = computed(() => !Utils.isStringNullOrBlank(state.searchText))
+
+    function clearSearch() {
+        state.searchText = "";
+    }
 
     function getSortFunction(type: SortByType, ascending: boolean): (a: Exercise, b: Exercise) => number {
         const modifier = ascending ? 1 : -1;
@@ -139,9 +177,16 @@
         return (a, b) => a.name.localeCompare(b.name) * modifier;
     }
 
+    const searchedExercises = computed(() => {
+        if (hasSearchText.value) {
+            return props.exercises.filter(e => e.name.toLowerCase().includes(state.searchText.toLowerCase()));
+        }
+        return props.exercises;
+    });
+
     const exercisesSorted = computed(() => {
         let sortFun = getSortFunction(state.sortByOption.type, state.sortAscending);
-        return [...props.exercises].sort(sortFun);
+        return [...searchedExercises.value].sort(sortFun);
     });
 
     function hideSortByDropdown() {
