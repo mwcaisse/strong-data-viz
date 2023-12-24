@@ -1,27 +1,34 @@
 
 <template>
     <div class="section">
-        <div
-            v-if="workouts.length < 1"
-            class="file is-normal is-boxed"
-        >
-            <label class="file-label">
-                <input
-                    class="file-input"
-                    type="file"
-                    style="cursor: pointer;"
-                    accept=".csv"
-                    @change="fileUploaded"
+        <div class="container is-info pb-3">
+            <div class="notification" v-if="state.constShowImportNotification">
+                <button class="delete" @click="hideImportNotification" type="button"></button>
+                <p>
+                    Strong data was last imported on {{ state.workoutDataLastImported.toLocaleString(DateTime.DATETIME_FULL_WITH_SECONDS) }}.
+                </p>
+                <div
+                    class="file is-normal is-boxed pt-3"
                 >
-                <span class="file-cta">
+                    <label class="file-label">
+                        <input
+                            class="file-input"
+                            type="file"
+                            style="cursor: pointer;"
+                            accept=".csv"
+                            @change="fileUploaded"
+                        >
+                        <span class="file-cta">
                     <span class="file-label">
-                        Strong Data Export
+                        Strong Data Import
                     </span>
                 </span>
-            </label>
+                    </label>
+                </div>
+            </div>
         </div>
+
         <div
-            v-else
             class="container"
         >
             <div class="tabs is-medium is-boxed">
@@ -60,6 +67,8 @@
     import {useWorkoutsStore} from "@/stores/workout";
     import {storeToRefs} from "pinia";
     import WorkoutsOverview from "@/components/WorkoutsOverview.vue";
+    import {DateTime} from "luxon";
+    import {hydrateWorkouts} from "@/services/WorkspaceDeserializer";
 
     enum TabType {
         Workouts = 1,
@@ -69,15 +78,26 @@
 
     interface ElementState {
         currentTab: TabType;
-
+        workoutDataLastImported: DateTime | null;
+        constShowImportNotification: boolean;
     }
+
+    const storedWorkoutData = getWorkoutDataFromStorage();
+
     const state : ElementState = reactive({
-        currentTab: TabType.Overview
+        currentTab: TabType.Overview,
+        constShowImportNotification: true,
+        workoutDataLastImported: null
     });
 
     const workoutStore = useWorkoutsStore();
 
     const {workouts, exercises} = storeToRefs(workoutStore);
+
+    if (storedWorkoutData) {
+        parseImportedWorkouts(storedWorkoutData.workouts);
+        state.workoutDataLastImported = storedWorkoutData.lastImported;
+    }
 
     function setTab(newTab: TabType) {
         state.currentTab = newTab;
@@ -109,12 +129,54 @@
 
         const file = input.files[0];
         const workouts = await readWorkoutFile(file);
+
+        parseImportedWorkouts(workouts);
+        state.workoutDataLastImported = DateTime.now();
+
+        // if we successfully parsed the data, then save it to local storage
+        saveWorkoutDataToStorage(workouts);
+        hideImportNotification();
+    }
+
+    function parseImportedWorkouts(workouts: Workout[]) {
         const exercises = createExercisesFromWorkouts(workouts);
 
         workouts.sort((l, r) => r.date.toMillis() - l.date.toMillis())
 
         workoutStore.setWorkouts(workouts);
         workoutStore.setExercises(exercises);
+    }
+
+    const LOCAL_STORAGE_WORKOUT_DATA = "workoutData";
+
+    interface WorkoutDataStorage {
+        workouts: Workout[];
+        lastImported: DateTime;
+    }
+
+    function getWorkoutDataFromStorage() : WorkoutDataStorage | null {
+        const workoutData = localStorage.getItem(LOCAL_STORAGE_WORKOUT_DATA);
+        if (workoutData) {
+            const parsedData = JSON.parse(workoutData);
+            return {
+                workouts: hydrateWorkouts(parsedData.workouts),
+                lastImported: DateTime.fromISO(parsedData.lastImported)
+            }
+        }
+        return null;
+    }
+
+    function saveWorkoutDataToStorage(workouts: Workout[]) {
+        const storageData = {
+            workouts: workouts,
+            lastImported: DateTime.now()
+        }
+
+        localStorage.setItem(LOCAL_STORAGE_WORKOUT_DATA, JSON.stringify(storageData));
+    }
+
+    function hideImportNotification() {
+        state.constShowImportNotification = false;
     }
 
 </script>
