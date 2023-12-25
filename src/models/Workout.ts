@@ -21,4 +21,8 @@ export interface Workout {
     exercises: WorkoutExercise[];
 }
 
+export interface ExercisePerformance {
+    exercise: WorkoutExercise;
+    workout: Workout;
+}
 

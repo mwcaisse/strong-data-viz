@@ -26,7 +26,7 @@
                 {{ set.weight }} {{ set.weightUnit }} x {{ set.reps }}
             </span>
             <span class="is-flex">
-                {{ calculateOneRepMax(set) }} {{ set.weightUnit }}
+                {{ WorkoutUtils.calculateOneRepMax(set) }} {{ set.weightUnit }}
             </span>
         </p>
     </div>
@@ -34,8 +34,9 @@
 
 <script setup lang="ts">
 
-    import type {WorkoutExercise, WorkoutExerciseSet} from "@/models/Workout";
+    import type {WorkoutExercise} from "@/models/Workout";
     import Utils from "@/services/Utils";
+    import WorkoutUtils from "@/services/WorkoutUtils";
 
     interface Props {
         exercise: WorkoutExercise;
@@ -44,9 +45,6 @@
 
     const props = defineProps<Props>();
 
-    function calculateOneRepMax(set: WorkoutExerciseSet) : number {
-        return Math.round(set.weight / (1.0278 - (0.0278 * set.reps)));
-    }
 
 </script>
 

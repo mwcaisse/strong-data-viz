@@ -3,7 +3,18 @@
         ref="modal"
         :title="modalTitle"
     >
+        <div class="tabs is-medium is-boxed">
+            <ul>
+                <li :class="{'is-active': state.currentTab === TabType.History}">
+                    <a @click="setTab(TabType.History)">History</a>
+                </li>
+                <li :class="{'is-active': state.currentTab === TabType.Graphs}">
+                    <a @click="setTab(TabType.Graphs)">Graphs</a>
+                </li>
+            </ul>
+        </div>
         <div
+            v-if="state.currentTab === TabType.History"
             v-for="performance in state.performances"
             class="box"
         >
@@ -18,6 +29,9 @@
                 class="pt-3"
             />
         </div>
+        <div v-if="state.currentTab === TabType.Graphs">
+            <ExercisePerformanceOverTime v-if="state.exercise" :exercise="state.exercise" />
+        </div>
     </Modal>
 </template>
 
@@ -25,23 +39,27 @@
     import {computed, reactive, ref} from "vue";
 
     import type {Exercise} from "@/models/Exercise";
-    import type {Workout, WorkoutExercise} from "@/models/Workout";
+    import type {ExercisePerformance} from "@/models/Workout";
     import WorkoutSets from "@/components/WorkoutSets.vue";
     import Modal from "@/components/Common/Modal.vue";
     import Utils from "@/services/Utils";
+    import {convertExerciseToPerformanceList} from "@/services/WorkoutUtils";
+    import ExercisePerformanceOverTime from "@/components/Charts/ExercisePerformanceOverTime.vue";
 
-    interface ExercisePerformance {
-        exercise: WorkoutExercise;
-        workout: Workout;
+    enum TabType {
+        History = 1,
+        Graphs = 2
     }
 
     interface ElementState {
         performances?: ExercisePerformance[];
         exercise?: Exercise;
-    }
+        currentTab: TabType;
+    };
 
     const state = reactive<ElementState>({
-        performances: []
+        performances: [],
+        currentTab: TabType.History
     });
 
     const modalTitle = computed(() => {
@@ -53,25 +71,8 @@
 
     const modal = ref(null);
 
-    function convertExerciseToPerformance(exercise: Exercise) : ExercisePerformance[] {
-
-        let performances = exercise.workouts.map((workout: Workout) => {
-
-            let workoutExercise = workout.exercises.filter((e: WorkoutExercise) => e.name === exercise.name)[0];
-
-            return {
-                exercise: workoutExercise,
-                workout: workout
-            };
-        });
-
-        performances.sort((l, r) => r.workout.date.toMillis() - l.workout.date.toMillis());
-
-        return performances;
-    }
-
     const open = (exercise: Exercise) => {
-        state.performances = convertExerciseToPerformance(exercise);
+        state.performances = convertExerciseToPerformanceList(exercise);
         state.exercise = exercise;
         modal.value.open();
     };
@@ -79,6 +80,10 @@
     defineExpose({
         open
     });
+
+    function setTab(newTab: TabType) {
+        state.currentTab = newTab;
+    }
 
 </script>
 

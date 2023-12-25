@@ -12,6 +12,10 @@ export function formatDateTime(dt: DateTime) : string {
     return dt.toLocaleString(DateTime.DATETIME_FULL_WITH_SECONDS);
 }
 
+export function formatDate(dt: DateTime) : string {
+    return dt.toFormat("yyyy-MM-dd");
+}
+
 export function prettyDuration(duration: Duration) : string {
     return duration.rescale().toHuman();
 }
@@ -29,6 +33,7 @@ export function startOfWeek(dt: DateTime, startOnSunday: boolean = true) {
 export default {
     isStringNullOrBlank,
     formatDateTime,
+    formatDate,
     prettyDuration,
     startOfWeek
 }
