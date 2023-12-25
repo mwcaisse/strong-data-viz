@@ -6,7 +6,10 @@
         >
             <div class="navbar-menu">
                 <div class="navbar-start">
-                    <RouterLink to="/" class="navbar-item">
+                    <RouterLink
+                        to="/"
+                        class="navbar-item"
+                    >
                         Home
                     </RouterLink>
                 </div>

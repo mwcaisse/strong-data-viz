@@ -1,11 +1,14 @@
 <template>
-    <Bar :data="data" :options="options" />
+    <Bar
+        :data="data"
+        :options="options"
+    />
 </template>
 
 <script setup lang="ts">
 
-    import { Chart as ChartJS, Colors, Title, Tooltip, Legend, CategoryScale, LinearScale, BarElement } from "chart.js";
-    import { Bar } from "vue-chartjs";
+    import {Chart as ChartJS, Colors, Title, Tooltip, Legend, CategoryScale, LinearScale, BarElement} from "chart.js";
+    import {Bar} from "vue-chartjs";
     import {useWorkoutsStore} from "@/stores/workout";
     import {computed} from "vue";
     import {DateTime} from "luxon";
@@ -35,24 +38,20 @@
             workoutsMap.set(workoutWeek, current + 1);
         });
 
-        return [...workoutsMap.entries()].map(e => {
-            return {
-                x: e[0],
-                y: e[1]
-            }
-        }).sort((l, r) => l.x.localeCompare(r.x));
+        return [...workoutsMap.entries()].map(e => ({
+            x: e[0],
+            y: e[1]
+        })).sort((l, r) => l.x.localeCompare(r.x));
     });
 
-    const data = computed(() => {
-        return {
-            datasets: [
-                {
-                    label: "Workouts per week",
-                    data: dataSetData.value
-                }
-            ]
-        }
-    });
+    const data = computed(() => ({
+        datasets: [
+            {
+                label: "Workouts per week",
+                data: dataSetData.value
+            }
+        ]
+    }));
 
     const options = {
         responsive: true,

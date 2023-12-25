@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: strong-data-viz
+  namespace: dev
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 80
+  selector:
+    app: strong-data-viz
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: strong-data-viz
+  namespace: dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: strong-data-viz
+  template:
+    metadata:
+      labels:
+        app: strong-data-viz
+    spec:
+      containers:
+        - name: strong-data-viz
+          image: registry.gitlab.com/mwcaisse/application-images/strong-data-viz:[[image-tag]]
+          ports:
+            - containerPort: 80
+      imagePullSecrets:
+        - name: docker-creds

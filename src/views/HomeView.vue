@@ -2,8 +2,15 @@
 <template>
     <div class="section">
         <div class="container is-info pb-3">
-            <div class="notification" v-if="state.constShowImportNotification">
-                <button class="delete" @click="hideImportNotification" type="button"></button>
+            <div
+                v-if="state.constShowImportNotification"
+                class="notification"
+            >
+                <button
+                    class="delete"
+                    type="button"
+                    @click="hideImportNotification"
+                />
                 <p>
                     Strong data was last imported on {{ state.workoutDataLastImported.toLocaleString(DateTime.DATETIME_FULL_WITH_SECONDS) }}.
                 </p>
@@ -19,10 +26,10 @@
                             @change="fileUploaded"
                         >
                         <span class="file-cta">
-                    <span class="file-label">
-                        Strong Data Import
-                    </span>
-                </span>
+                            <span class="file-label">
+                                Strong Data Import
+                            </span>
+                        </span>
                     </label>
                 </div>
             </div>
