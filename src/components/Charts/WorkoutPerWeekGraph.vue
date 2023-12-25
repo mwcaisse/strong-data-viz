@@ -9,14 +9,17 @@
 
     import {Chart as ChartJS, Colors, Title, Tooltip, Legend, CategoryScale, LinearScale, BarElement} from "chart.js";
     import {Bar} from "vue-chartjs";
+    import annotationPlugin from "chartjs-plugin-annotation";
     import {useWorkoutsStore} from "@/stores/workout";
     import {computed} from "vue";
     import {DateTime} from "luxon";
     import Utils from "@/services/Utils";
 
-    ChartJS.register(Colors, Title, Tooltip, Legend, CategoryScale, LinearScale, BarElement);
+    ChartJS.register(Colors, Title, Tooltip, Legend, CategoryScale, LinearScale, BarElement, annotationPlugin);
 
     const workoutStore = useWorkoutsStore();
+
+    const workoutsPerWeekTarget = 6;
 
     const dataSetData = computed(() => {
         const currentWeek = Utils.startOfWeek(DateTime.now());
@@ -60,6 +63,20 @@
                 beginAtZero: true,
                 ticks: {
                     stepSize: 1
+                },
+                grace: 1
+            }
+        },
+        plugins: {
+            annotation: {
+                annotations: {
+                    target: {
+                        type: "line",
+                        yMin: workoutsPerWeekTarget,
+                        yMax: workoutsPerWeekTarget,
+                        borderColor: 'rgb(255, 99, 132)',
+                        borderWidth: 2
+                    }
                 }
             }
         }
