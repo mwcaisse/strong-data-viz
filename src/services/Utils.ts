@@ -16,8 +16,18 @@ export function prettyDuration(duration: Duration) : string {
     return duration.rescale().toHuman();
 }
 
+export function startOfWeek(dt: DateTime, startOnSunday: boolean = true) {
+    // Luxon by default assumes that the week starts on Monday, this translates it to starting on Sunday
+    if (startOnSunday) {
+        return dt.plus({day: 1}).startOf("week").minus({day: 1});
+    }
+    return dt.startOf("week");
+
+}
+
 export default {
     isStringNullOrBlank,
     formatDateTime,
-    prettyDuration
+    prettyDuration,
+    startOfWeek
 }

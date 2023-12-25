@@ -117,6 +117,9 @@
                 :max-date="new Date()"
             />
         </div>
+        <div>
+            <WorkoutPerWeekGraph />
+        </div>
     </div>
 </template>
 
@@ -131,6 +134,7 @@
     import type {DateTimeUnit} from "luxon/src/datetime";
     import type {Workout} from "@/models/Workout";
     import {prettyDuration} from "@/services/Utils";
+    import WorkoutPerWeekGraph from "@/components/Charts/WorkoutPerWeekGraph.vue";
 
     const workoutStore = useWorkoutsStore();
 
