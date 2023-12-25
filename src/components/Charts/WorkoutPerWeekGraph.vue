@@ -75,7 +75,12 @@
                         yMin: workoutsPerWeekTarget,
                         yMax: workoutsPerWeekTarget,
                         borderColor: 'rgb(255, 99, 132)',
-                        borderWidth: 2
+                        borderWidth: 2,
+                        label: {
+                            content: "Target",
+                            display: true,
+                            position: "end"
+                        }
                     }
                 }
             }
