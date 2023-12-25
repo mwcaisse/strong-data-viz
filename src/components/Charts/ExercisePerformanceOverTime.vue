@@ -6,16 +6,16 @@
 </template>
 
 <script setup lang="ts">
-    import {Chart as ChartJS, Colors, Title, Tooltip, Legend, CategoryScale, LinearScale, LineElement, PointElement} from "chart.js";
+    import {Chart as ChartJS, Colors, Title, Tooltip, Legend, TimeScale, LinearScale, LineElement, PointElement} from "chart.js";
     import {Line} from "vue-chartjs";
-    import annotationPlugin from "chartjs-plugin-annotation";
+    import "chartjs-adapter-luxon";
     import {computed} from "vue";
     import Utils from "@/services/Utils";
     import type {Exercise} from "@/models/Exercise";
     import WorkoutUtils, {convertExerciseToPerformanceList} from "@/services/WorkoutUtils";
     import type {WorkoutExerciseSet} from "@/models/Workout";
 
-    ChartJS.register(Colors, Title, Tooltip, Legend, CategoryScale, LinearScale, LineElement, PointElement, annotationPlugin);
+    ChartJS.register(Colors, Title, Tooltip, Legend, TimeScale, LinearScale, LineElement, PointElement);
 
     interface Props {
         exercise: Exercise
@@ -28,7 +28,8 @@
     });
 
     const labels = computed(() => {
-       return exercisePerformances.value.map(ep => Utils.formatDate(ep.workout.date));
+       //return exercisePerformances.value.map(ep => Utils.formatDate(ep.workout.date));
+       return exercisePerformances.value.map(ep => ep.workout.date);
     });
 
     const bestSetData = computed(() => {
@@ -92,7 +93,15 @@
     }));
 
     const options = {
-        responsive: true
+        responsive: true,
+        scales: {
+            x: {
+                type: "time",
+                time: {
+                    unit: "day"
+                }
+            }
+        }
     }
 
 
