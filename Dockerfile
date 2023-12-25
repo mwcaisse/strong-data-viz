@@ -10,4 +10,4 @@ RUN yarn build-only
 FROM nginx:latest as runtime
 
 COPY --from=build /build/src/dist /usr/share/nginx/html
-COPY nginx.nginx.conf /etc/nginx/nginx.conf
+COPY nginx/nginx.conf /etc/nginx/nginx.conf
