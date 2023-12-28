@@ -29,7 +29,7 @@ spec:
     spec:
       containers:
         - name: strong-data-viz
-          image: registry.gitlab.com/mwcaisse/application-images/strong-data-viz:[[image-tag]]
+          image: registry.gitlab.com/mwcaisse/application-images/strong-data-viz:[[image_tag]]
           ports:
             - containerPort: 80
       imagePullSecrets:
