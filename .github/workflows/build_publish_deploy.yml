@@ -1,0 +1,53 @@
+name: Build, Publish, and Deploy to Prod
+on:
+  push:
+    branches:
+      - master
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build_publish:
+    name: Build and Publish image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout master
+        uses: actions/checkout@v4
+
+      - name: Build and Publish
+        uses: mwcaisse/gha-common/actions/build_and_push_image@master
+        with:
+          registry: registry.gitlab.com
+          username: ${{ vars.GITLAB_USERNAME }}
+          password: ${{ secrets.GITLAB_TOKEN }}
+          tags: |
+            registry.gitlab.com/mwcaisse/application-images/strong-data-viz:latest
+            registry.gitlab.com/mwcaisse/application-images/strong-data-viz:${{ github.sha }}
+
+  deploy:
+    name: Deploy to production
+    runs-on: ubuntu-latest
+    needs: build_publish
+    environment: dev
+    steps:
+      - name: Checkout master
+        uses: actions/checkout@v4
+
+      - name: Add the SHA to K8s template
+        uses: mwcaisse/gha-common/actions/replace_placeholder_in_template@master
+        with:
+          template_file: k8s.dev.yml
+          token: image_tag
+          value: ${{ github.sha }}
+
+      - name: Deploy to Kubernetes
+        uses: mwcaisse/gha-common/actions/deploy_to_kubernetes@master
+        with:
+          deployment_file: k8s.dev.yml
+          deployment_name: strong-data-viz
+          namespace: dev
+          kubernetes_server: ${{ vars.KUBERNETES_SERVER }}
+          kubernetes_ca: ${{ secrets.KUBERNETES_CA }}
+          kubernetes_token: ${{ secrets.KUBERNETES_TOKEN_DEV }}
