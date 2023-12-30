@@ -1,21 +1,6 @@
 
 <template>
     <div>
-        <p>
-            <span>Some notes</span>
-            <ul>
-                <li>Workouts per Week</li>
-                <li>Workouts per Month</li>
-                <li>Workouts per Year</li>
-                <li>Calendar with workouts per day type view</li>
-
-                <li>Exercise: Most Weight</li>
-                <li>Exercise: Best Set (1est 1RM)</li>
-                <li>Exercise: Total Volume</li>
-                <li>Max Weight across all exercises</li>
-            </ul>
-        </p>
-
         <div class="tile is-ancestor pt-5">
             <div class="tile">
                 <div class="tile is-parent is-vertical">
