@@ -7,11 +7,12 @@
                 class="notification"
             >
                 <button
+                    v-if="hasImportedData"
                     class="delete"
                     type="button"
                     @click="hideImportNotification"
                 />
-                <p>
+                <p v-if="hasImportedData">
                     Strong data was last imported on {{ state.workoutDataLastImported.toLocaleString(DateTime.DATETIME_FULL_WITH_SECONDS) }}.
                 </p>
                 <div
@@ -36,6 +37,7 @@
         </div>
 
         <div
+            v-if="hasImportedData"
             class="container"
         >
             <div class="tabs is-medium is-boxed">
@@ -65,7 +67,7 @@
 </template>
 
 <script setup lang="ts">
-    import {reactive} from "vue";
+    import {computed, reactive} from "vue";
     import {readWorkoutFile} from "@/services/WorkoutImporter";
     import type {Workout} from "@/models/Workout";
     import WorkoutList from "@/components/WorkoutList.vue";
@@ -96,6 +98,8 @@
         constShowImportNotification: true,
         workoutDataLastImported: null
     });
+
+    const hasImportedData = computed(() => state.workoutDataLastImported !== null);
 
     const workoutStore = useWorkoutsStore();
 
